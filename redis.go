@@ -28,5 +28,5 @@ func main(){
 	if hmErr!=nil{
 		panic(hmErr)
 	}
-	redis.Hset("name","_name",[]byte("xiaoli"))
+	_, _ = redis.Hset("name", "_name", []byte("xiaoli"))
 }
