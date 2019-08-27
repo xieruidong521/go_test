@@ -24,6 +24,7 @@ func ws(w http.ResponseWriter,r *http.Request) {
 	handleConn(conn)
 	//处理消息
 	go handleMsg()
+	//接收消息
 	go func(connection *websocket.Conn) {
 		defer func() {
 			delete(allConnections,connection.RemoteAddr().String())
