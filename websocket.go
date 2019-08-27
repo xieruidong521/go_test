@@ -11,6 +11,7 @@ import (
 const (
 	LogDir    ="D:/"
 	LogServer ="server.log"
+	Listen    ="0.0.0.0:8080"
 )
 
 //存储websocket连接
@@ -29,7 +30,7 @@ func main() {
 	logger=log.New(logFile,"\r\n",log.Ldate|log.Ltime|log.Llongfile)
 	logger.Println("创建log文件完成...")
 
-	ws,err:=net.Listen("tcp","0.0.0.0:8080")
+	ws,err:=net.Listen("tcp",Listen)
 	if err != nil {
 		panic(err)
 	}

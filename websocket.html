@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>websocket</title>
+</head>
+<body>
+<label>
+    <input type="text" value="么么da">
+</label>
+<button onclick="send()">发送信息</button>
+<button onclick="ws_close()">关闭连接</button>
+<div></div>
+<ul></ul>
+<script>
+    let ws=new WebSocket('ws://127.0.0.1:8080')
+    let div=document.getElementsByTagName('div')[0]
+    let input=document.getElementsByTagName('input')[0]
+    let ul=document.getElementsByTagName('ul')[0]
+    ws.open=function(data){
+        console.log(data);
+    }
+    ws.onerror=function(data){
+        div.innerHTML="连接失败 "+data.type
+    }
+    ws.onclose=function(data){
+        div.innerHTML="连接已关闭"
+        console.log('close',data)
+    }
+    ws.onmessage=function (msg) {
+        console.log(msg);
+        let li=document.createElement('li')
+        li.innerHTML=msg.data
+        ul.append(li)
+    }
+    function send() {
+        switch (ws.readyState) {
+            case 0:
+                div.innerHTML="正在连接中。。。，暂时不能发送消息"
+                return;
+            case 2:
+            case 3:
+                div.innerHTML="连接已关闭...不能发送消息"
+                return
+        }
+        ws.send(input.value)
+    }
+    function ws_close() {
+        console.log('手动关闭连接')
+        ws.close()
+    }
+</script>
+</body>
+</html>
