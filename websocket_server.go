@@ -20,7 +20,10 @@ func main(){
 }
 func ws(w http.ResponseWriter,r *http.Request) {
 	conn, _ := websocket.Upgrade(w, r, nil, 0, 0)
+	//接收请求
 	handleConn(conn)
+	//处理消息
+	go handleMsg()
 	go func(connection *websocket.Conn) {
 		defer func() {
 			delete(allConnections,connection.RemoteAddr().String())
@@ -34,7 +37,7 @@ func ws(w http.ResponseWriter,r *http.Request) {
 				break
 			}
 			fmt.Println("收到",connection.RemoteAddr().String(),"消息",string(message))
-			handleMsg(message)
+			msgChannel<-string(message)
 		}
 	}(conn)
 }
@@ -45,14 +48,18 @@ func handleConn(conn *websocket.Conn) {
 		allConnections[addr]=conn
 	}
 }
-func handleMsg(message []byte) {
-	msg:=string(message)+"！"
-	for _,conn:=range allConnections{
-		//fmt.Println(conn.WriteMessage(1,[]byte("1")))
-		err := conn.WriteMessage(1, []byte(msg))
-		if err != nil {
-			fmt.Println("发送消息出错",err.Error())
-			continue
+func handleMsg() {
+	for {
+		select {
+		case message:=<-msgChannel:
+			msg:=message+"！"
+			for _,conn:=range allConnections{
+				err := conn.WriteMessage(1, []byte(msg))
+				if err != nil {
+					fmt.Println("发送消息出错",err.Error())
+					continue
+				}
+			}
 		}
 	}
 }
