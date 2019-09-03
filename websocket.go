@@ -93,7 +93,7 @@ func receive(conn net.Conn) {
 				ips+=addr+"\n"
 			}
 			ips+="===============\n"
-			conn.Write([]byte(ips))
+			_, _ = conn.Write([]byte(ips))
 			continue
 		}
 		msgChan<-msg
@@ -112,7 +112,7 @@ func forwardMessage(){
 			addr:=msgInfo[0]
 			msgSend:=strings.Join(msgInfo[1:],"#")
 			if conn,ok:=connections[addr];ok{
-				conn.Write([]byte(msgSend))
+				_, _ = conn.Write([]byte(msgSend))
 			}
 		}
 	}
